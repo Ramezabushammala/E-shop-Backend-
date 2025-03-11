@@ -86,7 +86,7 @@ app.use(globalError);
 
 const { PORT } = process.env;
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT||8000, () => {
   console.log(`server run is Port ${PORT}`);
   console.log("Current NODE_ENV:", process.env.NODE_ENV);
 });

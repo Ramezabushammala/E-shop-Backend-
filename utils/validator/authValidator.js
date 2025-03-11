@@ -1,6 +1,6 @@
-const { check, body } = require("express-validator");
+const { check } = require("express-validator");
 const slugify = require("slugify");
-const  bcrypt = require("bcryptjs");
+
 const validatorMiddleware = require("../../middlewares/validetorMiddleware");
 const userModel = require("../../models/userModel");
 
@@ -27,7 +27,7 @@ exports.SignUpValidator = [
         }
       })
     ),
-    check("password")
+  check("password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 6 })
@@ -46,7 +46,6 @@ exports.SignUpValidator = [
   validatorMiddleware,
 ];
 
-
 exports.LoginValidator = [
   check("email")
     .notEmpty()
@@ -54,11 +53,10 @@ exports.LoginValidator = [
     .isEmail()
     .withMessage("Invalid Email Format"),
 
-    check("password")
+  check("password")
     .notEmpty()
     .withMessage("password is required")
     .isLength({ min: 6 })
     .withMessage("Too short Password"),
-    validatorMiddleware,
-   
-]
+  validatorMiddleware,
+];
