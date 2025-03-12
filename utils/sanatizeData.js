@@ -1,5 +1,4 @@
 
-
 exports.sanitizeUser = function(user) {
     return {
       _id: user._id,
