@@ -140,9 +140,12 @@ exports.CheckoutSession = asyncHandler(async (req, res, next) => {
 });
 
 exports.WebhookCheckOut = asyncHandler(async (req, res, next) => {
+  console.log("🔹 Webhook received!");
+  
   const signature = req.headers["stripe-signature"];
   let event;
   try {
+    console.log("🔹 STRIPE_WEBHOOK_SECRET:", process.env.STRIPE_WEBHOOK_SECRET);
     event = stripe.webhooks.constructEvent(
       req.body,
       signature,
