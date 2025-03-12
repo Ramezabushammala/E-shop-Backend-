@@ -17,6 +17,7 @@ const dbConnection = require("./config/database");
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddleware");
 const mountRoutes = require("./routes");
+const { WebhookCheckOut } = require("./services/orderServices");
 // connect db
 dbConnection();
 //express app
@@ -27,6 +28,8 @@ app.use(cors());
 app.options("*", cors());
 //compress all response
 app.use(compression());
+//Checkout webhook
+app.post('/webhook-checkout',express.raw({type:'application/json'}),WebhookCheckOut)
 
 //   middleware
 app.use(express.json({ limit: "20kb" })); // convert string from postman to json objact
