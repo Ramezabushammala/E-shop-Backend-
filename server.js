@@ -22,6 +22,7 @@ const { WebhookCheckOut } = require("./services/orderServices");
 dbConnection();
 //express app
 const app = express();
+app.set("trust proxy", 1);
 
 //Enable others domains acsses to your application
 app.use(cors());
