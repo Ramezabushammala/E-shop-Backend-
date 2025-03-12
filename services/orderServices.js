@@ -5,6 +5,7 @@ const factory = require("./FactoryHandler");
 const ApiError = require("../utils/apiError");
 const CartModel = require("../models/cartModel");
 const productModel = require("../models/productModel");
+const userModel = require("../models/userModel");
 
 //cash
 exports.CreateCashOrder = asyncHandler(async (req, res, next) => {
@@ -139,25 +140,63 @@ exports.CheckoutSession = asyncHandler(async (req, res, next) => {
   // res.redirect(303, session.url);
 });
 
+const createCardOrder = async (session)=>{
+  // create order
+  const cartId = session.client_reference_id;
+  const shippingAddreses=session.metadata;
+  const orderPrice = session.amount_total/100;
+
+  const cart = await CartModel.findById(cartId);
+  const user = await userModel.findOne({email:session.customer_email});
+
+//Create order with default paymentMethod card
+  const order = await OrderModel.create({
+    user: user._id,
+    cartItems: cart.cartItems,
+    shippingAddreses,
+    totalOrderPrice:orderPrice,
+    isPaid:true,
+    PaidAt:Date.now(),
+    paymentMethodType:'card'
+  });
+   
+  if (order) {
+    const bulkOperations = cart.cartItems.map((item) => ({
+      updateOne: {
+        filter: { _id: item.product },
+        update: {
+          $inc: { quantity: -item.quantity, sold: item.quantity },
+        },
+      },
+    }));
+    // After creating order , decrement product quentity , increment product sold
+    //bulkWrite to use array operation but updateOne no use array operation
+    await productModel.bulkWrite(bulkOperations);
+
+    // Clear cart depend on cartId
+    await CartModel.findByIdAndDelete(cartId)
+  }
+}
+
 exports.WebhookCheckOut = asyncHandler(async (req, res, next) => {
   console.log("🔹 Webhook received!");
   
   const signature = req.headers["stripe-signature"];
   let event;
   try {
-    console.log("🔹 STRIPE_WEBHOOK_SECRET:", process.env.STRIPE_WEBHOOK_SECRET);
     event = stripe.webhooks.constructEvent(
       req.body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-    console.log(event.data.object.client_reference_id)
   } catch (err) {
     return res.status(400).json({ status: "error", message: err.message });
   }
- console.log(event.data.object.client_reference_id)
   if(event.type === "checkout.session.completed"){
-    console.log("create Order Here ....")
+    console.log("create Order Here ....");
+    createCardOrder(event.data.object);
   }
+
+  return res.status(200).json({received:true});
 
 });
