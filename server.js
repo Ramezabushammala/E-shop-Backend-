@@ -30,8 +30,7 @@ app.options("*", cors());
 //compress all response
 app.use(compression());
 //Checkout webhook
-app.post('/webhook-checkout',express.raw({ type: 'application/json' }),WebhookCheckOut)
-
+app.post('/webhook-checkout',express.raw({ type: 'application/json' }),WebhookCheckOut);
 //   middleware
 app.use(express.json({ limit: "20kb" })); // convert string from postman to json objact
 app.use(express.urlencoded({ extended: true }));
