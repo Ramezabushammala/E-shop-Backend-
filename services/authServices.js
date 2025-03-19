@@ -116,9 +116,6 @@ exports.ForgetPassword = asyncHandler(async (req, res, next) => {
       message,
     });
     return res.status(200).json({status : "Sucess" , message:" Reset code sent to email"});
-  
-
-  
 });
 
 //@dec verifypasswordcode
@@ -128,7 +125,7 @@ exports.ForgetPassword = asyncHandler(async (req, res, next) => {
 exports.VerifyResetCode = asyncHandler(async (req,res,next)=>{
       const resetCodehash = Crypto.createHash("sha256")
       .update(req.body.resetcode)
-      .digest("hex");  ;
+      .digest("hex");
      
       const user = await userModel.findOne({
         randomCodehash:resetCodehash,
@@ -147,15 +144,19 @@ exports.VerifyResetCode = asyncHandler(async (req,res,next)=>{
 //@access Public
 
 exports.ResetPassword = asyncHandler(async (req,res,next)=>{
-  const user = await userModel.findOne({passwordVerifieRestCode:true})
+  const user = await userModel.findOne({email:req.body.email})
   if(!user){
-    return next(new ApiError ("reset Code not verified"))
+    return next(new ApiError ("user not found check email"))
     }
-    user.password = req.body.newpassword;
-    user.passwordVerifieRestCode =undefined;
-    user.randomCodehash=undefined;
-    user.passwordResetCodeExpire=undefined;
-    user.save();
+    if(!user.passwordVerifieRestCode){
+      return next(new ApiError ("reset Code not verified to this email"))
+    }
+      user.password = req.body.newpassword;
+      user.passwordVerifieRestCode =undefined;
+      user.randomCodehash=undefined;
+      user.passwordResetCodeExpire=undefined;
+      user.save();
+
      // genrate token
      const token = CreteToken(user._id);
     return res.status(200).json({status:"Sucess",token});

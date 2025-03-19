@@ -35,7 +35,7 @@ reviewSchema.statics.getAverageRatingsAndQuentity = async function (productId) {
    }else{
     await productModel.findByIdAndUpdate(productId, { ratingsAverage: 0, ratingsQuantity: 0});
    }
-  };
+};
 
   reviewSchema.post("save", async function () {
     await this.constructor.getAverageRatingsAndQuentity(this.product);
@@ -44,10 +44,10 @@ reviewSchema.statics.getAverageRatingsAndQuentity = async function (productId) {
     await doc.constructor.getAverageRatingsAndQuentity(doc.product);
   });
 
- reviewSchema.pre(/^find/,function(next){
+reviewSchema.pre(/^find/,function(next){
     this.populate({path:"user",select:"name"});
     next();
- });
+});
 
 const ReviewModel = mongoose.model("Review",reviewSchema);
 

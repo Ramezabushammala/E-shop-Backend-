@@ -13,6 +13,7 @@ const globalError = (err, req, res, next) => {
       stack: err.stack,
     });
   };
+  
   const handleJwtInvaliedSignture = () => new ApiError("Invalid token , please login again...",401);
   const handleJwtExpired = () => new ApiError("Expired token , please login again...",401);
   // eslint-disable-next-line no-shadow

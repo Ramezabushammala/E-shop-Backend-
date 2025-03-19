@@ -20,9 +20,13 @@ exports.getAll = (model,modelname="")=>
         const apiFeature = new FeatureApi(model.find(filtar), req.query)
           .pagenat(documentsCount)
           .sort()
-          .Filter()
-          .fields()
-          .search(modelname);
+          .fields();
+
+          if (req.query.keyword) {
+            apiFeature.search(modelname);
+          }else{
+              apiFeature.Filter();
+          }
         //Execute query
         const { mongooseQuery, pagenationResult } = apiFeature;
         const documents = await mongooseQuery;

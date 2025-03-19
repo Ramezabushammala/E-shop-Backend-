@@ -18,7 +18,7 @@ exports.uploadImagesProdact =uploadMixofImages([
      name:"images",
      maxCount:5
     }
-])
+]);
 
 exports.resizeImageProduct = asyncHandler(async(req,res,next)=>{
     //prossing coverimage
@@ -50,7 +50,7 @@ exports.resizeImageProduct = asyncHandler(async(req,res,next)=>{
     }
 
    next();
-})
+});
 
 exports.createProduct =factory.createone(productModel);
 

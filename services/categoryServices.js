@@ -5,8 +5,6 @@ const CategoryModel = require("../models/categoryModel");
 const factory = require("./FactoryHandler");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 
-
-
 exports.uploadCategoryimage = uploadSingleImage("image");
 
 exports.resizeImage = asyncHandler(async (req, res, next) => {
